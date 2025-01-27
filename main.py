@@ -1,4 +1,4 @@
-import numpy as np
+areimport numpy as np
 import datetime as dt
 
 class Room:
@@ -47,5 +47,3 @@ print (math_cy)
 # 24 23 22 21
 # 25 24 23 22
 # 26 25 24 23
-
-# Adheem is fucking retarded 
