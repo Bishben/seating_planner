@@ -21,7 +21,7 @@ class Branch():
         branches.append(self)
 
     def __str__(self):
-        return f"Branch: {self.identity} \nStrength: {self.strength}\n"
+        return f"Branch: {self.identity}\nStrength: {self.strength}\n"
 
 class Exam():
     def __init__(self, code, date, time, Branches):

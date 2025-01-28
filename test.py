@@ -1,6 +1,6 @@
 import models
 
-#ROOM Test
+# TEST ROOM
 def test_room():
     type1 = models.Room(3, 4) # Including gap column + 1 
     text = "_ _   _ _ \n_ _   _ _ \n_ _   _ _ \n"
@@ -9,29 +9,23 @@ def test_room():
 
     if(models.rooms[0].type != 1): return 0
 
+    rooms = []
     return 1
 
-#ADD TEST FUNCTIONS HERE --CHECK END AND CONVERT--
-
-#example
+# TEST BRANCH
 def test_branch():
     test_cases = [
-        ("CC", "24", 60, "Branch:CC\nYear:2024\nStrength:60\n"),
-        ("CS", "23", 100, "Branch:CS\nYear:2023\nStrength:100\n"),
-        ("EE", "25", 40, "Branch:EE\nYear:2025\nStrength:40\n")
+        ("CC", "24", 60, "Branch: 24CC\nStrength: 60\n"),
+        ("CS", "23", 100, "Branch: 23CS\nStrength: 100\n"),
+        ("EE", "25", 40, "Branch: 25EE\nStrength: 40\n")
     ]
     
     for name, year, strength, expected in test_cases:
         branch = models.Branch(name, year, strength)
         if str(branch) != expected:
-            print(f"Test Failed for input: {name}, {year}, {strength}")
-            print(f"Expected: {expected}")
-            print(f"Got: {str(branch)}")
             return 0
-    
-    print("All Branch test cases passed.")
+
     return 1
-    # print (cy) #check what this should return comparing models.py and using condtion return 0 if false 
 
 # Tests Runner 
 def run_tests():
