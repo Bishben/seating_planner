@@ -5,7 +5,7 @@ class Room:
     def __init__(self, rows, columns):
         self.rows = rows
         self.columns = columns
-        self.type = len(branches) + 1
+        self.type = len(rooms) + 1 # Room Type 1, Room Type 2
         rooms.append(self)
     
     def __str__(self):
@@ -21,7 +21,7 @@ class Branch():
         branches.append(self)
 
     def __str__(self):
-        return f"Branch: {self.name} \nYear: 20{self.year} \nStrength: {self.strength}\n"
+        return f"Branch: {self.identity} \nStrength: {self.strength}\n"
 
 class Exam():
     def __init__(self, code, date, time, Branches):
