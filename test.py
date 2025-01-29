@@ -19,12 +19,22 @@ def test_branch():
         ("CS", "23", 100, "Branch: 23CS\nStrength: 100\n"),
         ("EE", "25", 40, "Branch: 25EE\nStrength: 40\n")
     ]
+
+    models.branches.clear()
     
     for name, year, strength, expected in test_cases:
         branch = models.Branch(name, year, strength)
         if str(branch) != expected:
             return 0
-
+        
+    if len(models.branches) != len(test_cases):
+        return 0
+    
+    for i in range(len(test_cases)):
+        expected_identity = test_cases[i][1] + test_cases[i][0]
+        if models.branches[i].identity != expected_identity:
+            return 0 
+    
     return 1
 
 # Tests Runner 
