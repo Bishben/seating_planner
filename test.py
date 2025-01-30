@@ -109,23 +109,3 @@ def run_tests():
 
     print("All Test Cases Passed")
     return 1
-
-
-
-
-
-
-# COONVERT THESE INTO TEST FUNCTIONS --SEPERATE FOR EACH--  --FOLLOW NAMING CONVENTION--
-# cy = Branch("CC", "24", 60)
-# print (cy)
-
-# print(branches[0].identity)
-
-# cs = Branch("CS", "24", 120)
-# print (cs)
-
-# print(branches)
-# print(branches[1].identity)
-
-# math_cy = Exam("GMAT101", "10/12/24", "09:30", [cy, cs])
-# print (math_cy)
