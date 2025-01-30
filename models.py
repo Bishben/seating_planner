@@ -33,7 +33,7 @@ class Exam():
         exams.append(self)
     
     def __str__(self):
-        return f"Code: {self.code} \nDate: {self.date} \nTime: {self.time}"
+        return f"Code: {self.code}\nDate: {self.date}\nTime: {self.time}\nBranches: {self.Branches}"
     
 # Exam-Room Under Development
 def addBranches():     
@@ -41,10 +41,11 @@ def addBranches():
     while(True):
         for i in exams:
             print (i.code, end = " ")
-        exam = input("\nSelect A Subject/Exam Code in f'GMAT101': ")
+        code = input("\nSelect A Subject/Exam Code in f'GMAT101': ").strip().upper()
+        exam = find_exam_by_code(code)
         for i in exam.Branches:
-            print (i.code, end = " ")
-        branch = input("Select Branch in f'YYBB': ")
+            print (i.identity, end = " ")
+        branch = input("\nSelect Branch in f'YYBB': ")
         start = int(input("Enter Start Roll No f(int): "))
         end = int(input("Enter End Roll No f(int): "))
 
@@ -53,8 +54,18 @@ def addBranches():
         cont = input("Add Another? (Y/N)")
         if (cont != 'Y'): break
     return branches_range
+
+def find_exam_by_code(code):
+    for exam in exams:
+        if(exam.code == code):
+            return exam
+    return None
         
 class ExamRoom():
-    def __init__(self, type, addBranches):
+    def __init__(self, type, number, addBranches):
         self.type = type
+        self.number = number
         self.branches_range = addBranches
+
+    def __str__(self):
+        return f"Type: {self.type}\nNumber: {self.number}\nBranches: {self.branches_range}\n"
