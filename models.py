@@ -7,6 +7,7 @@ class Room:
         self.rows = rows
         self.columns = columns
         self.type = len(rooms) + 1 # Room Type 1, Room Type 2
+        #self.matrix = [['_' * columns] * rows]]
         rooms.append(self)
     
     def __str__(self):
