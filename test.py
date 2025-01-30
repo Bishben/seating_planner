@@ -43,6 +43,7 @@ def run_tests():
 
     if(test_room() != 1): failed.append("Room")
     if(test_branch() != 1): failed.append("Branch")
+    if(test_exams() != 1 ): failed.append("Exam") 
     # ADD OTHER TEST CASES HERE
 
 
@@ -55,6 +56,25 @@ def run_tests():
         return 0
 
     print("All Test Cases Passed")
+    return 1
+
+# Test Exams
+def test_exams():
+    test_cases = [
+        ("CC", "24", 60),
+        ("CS", "23", 100)]
+    
+    CC = models.Branch(test_cases[0][0], test_cases[0][1], test_cases[0][2],)
+    CS = models.Branch(test_cases[1][0], test_cases[1][1], test_cases[1][2])
+    
+    math = models.Exam("GMAT101","22/11/2003","09:30",[CC,CS])
+    
+    expectedStr = "Code: GMAT101 \nDate: 22/11/2003 \nTime: 09:30"
+    expectedBranches = [CC,CS]
+    if str(math) != expectedStr:
+        return 0
+    if models.exams[0].Branches != expectedBranches:
+        return 0
     return 1
 
 
