@@ -12,8 +12,7 @@ class Room:
         rooms.append(self)
     
     def __str__(self):
-        # rows = '_ ' * (self.columns // 2) + '  ' + '_ ' * (self.columns // 2)
-        return "\n".join(" ".join(row) for row in self.matrix)#(rows + '\n') * self.rows
+        return "\n".join(" ".join(row) for row in self.matrix)
     
 class Branch():
     def __init__(self, name, year, strength):
