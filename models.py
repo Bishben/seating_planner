@@ -3,12 +3,12 @@ branches = []
 exams = []
 
 class Room:
-    def __init__(self, rows, columns, gap=0):
+    def __init__(self, rows, columns, gap=None):
         self.rows = rows # int: rows in room
         self.columns = columns # int: columns in room
         self.gap = gap # int: specifies where gap is after
         self.type = len(rooms) + 1 # int: assigning a type number
-        self.matrix = [["_"] * gap + [" "] + ["_"] * (columns-gap) for _ in range(rows)] if (gap!=0) else [["_"] * columns for _ in range(rows)] # list[list]: list of lists depicting rows and columns (columns x rows filled with '_')
+        self.matrix = [["_"] * gap + [" "] + ["_"] * (columns-gap) for _ in range(rows)] if (gap!=None) else [["_"] * columns for _ in range(rows)] # list[list]: list of lists depicting rows and columns (columns x rows filled with '_')
         rooms.append(self)
     
     def __str__(self):
