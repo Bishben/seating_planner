@@ -32,6 +32,7 @@ def auto_arrange(exam_room, subjs, copy = 0):
     print(" ".join(f"{key}:{best_case[key]}" for key in best_case))
     return best_case
 
+# Main Function that Arranges The ExamRoom Matrix
 def arrange(exam_room, subjs, offset_start = 0, diagonal = 0, copy = 0): # ExamRoom, list, Bool, Bool: Bool parameters indictate whether the settings are turned on or off 
 
     # Increments to the next sub and return to first sub if out of index
