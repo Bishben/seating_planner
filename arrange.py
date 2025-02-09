@@ -1,26 +1,59 @@
 from collections import defaultdict
+from itertools import permutations
 
-# Increments to the next sub and return to first sub if out of index
-def next_sub(i, subjs): # index, list: index of list, list of subjects f[("A", 14), ("B", 14),]
-    if(i >= len(subjs)-1):
-        return 0
+
+def auto_arrange(exam_room, subjs, copy = 0):
+    room = exam_room.room
+
+    def find_best_case(offset_start, diagonal, copy=0):
+        best_case = {"total": 0}
+        for perm in [list(perm) for perm in permutations(subjs)]:
+            exam_room.clear()
+            seating = arrange(exam_room, perm, offset_start, diagonal, copy)
+            if seating["total"] > best_case["total"]:
+                best_case = seating
+        return best_case
+
+    if(copy):
+        best_case_copy = find_best_case(0, 0, 1)
+        subjs_permutations_copy = [list(perm) for perm in permutations(subjs)]
+        del best_case_copy["matrix"]
+        print(" ".join(f"{key}:{best_case_copy[key]}" for key in best_case_copy))
+        return best_case_copy
+
+
+    best_case_offset = find_best_case(1, 1)
+    best_case_default = find_best_case(0,1)
+
+    best_case = best_case_offset if best_case_offset["total"] >= best_case_default["total"] else best_case_default
     
-    return i + 1
-
-# Removes a subject if the the amount of students are 0
-def rmv_sub(i, subjs): # index, list: index of list, list of subjects f[("A", 14), ("B", 14),]
-    last = len(subjs)-1
-    
-    if(subjs[i][1] == 0):
-        subjs.pop(i)
-        if(i == last): return 0
-
-    return i
+    exam_room.matrix = best_case["matrix"]
+    del best_case["matrix"]
+    print(" ".join(f"{key}:{best_case[key]}" for key in best_case))
+    return best_case
 
 def arrange(exam_room, subjs, offset_start = 0, diagonal = 0, copy = 0): # ExamRoom, list, Bool, Bool: Bool parameters indictate whether the settings are turned on or off 
 
+    # Increments to the next sub and return to first sub if out of index
+    def next_sub(i, subjs): # index, list: index of list, list of subjects f[("A", 14), ("B", 14),]
+        if(i >= len(subjs)-1):
+            return 0
+        
+        return i + 1
+
+    # Removes a subject if the the amount of students are 0
+    def rmv_sub(i, subjs): # index, list: index of list, list of subjects f[("A", 14), ("B", 14),]
+        last = len(subjs)-1
+        
+        if(subjs[i][1] == 0):
+            subjs.pop(i)
+            if(i == last): return 0
+
+        return i
+    
+
     room = exam_room.room # Gets Room Matrix: [['_']] list of lists 
-    i = 0 # indexing for subjs list
+    i = 2 # indexing for subjs list
 
     columns = room.columns+1 if room.gap else room.columns # Handles Matrix Columns Amount if Gap is Added
 
@@ -40,11 +73,14 @@ def arrange(exam_room, subjs, offset_start = 0, diagonal = 0, copy = 0): # ExamR
 
             # Copy On: Copies Element from Corresponding Left
             if((copy) and (col >= (room.gap if room.gap else col // 2))):
-                exam_room.matrix[row][col] = exam_room.matrix[row][col-(columns-room.gap)]
+                sub = exam_room.matrix[row][col-(columns-room.gap)][:-2]
+                roll = f"{sub}{counts[subjs[i][0]]+1:02}"
+                exam_room.matrix[row][col] = roll
+                counts[sub] += 1
                 continue
             # Copy Off: Skips Gap if landed on gap
             elif((not copy) and (col == room.gap)):
-                col += 2 if offset_start else 1
+                continue
 
             # Handles Case if no element can be placed ; Skips position / Seat
             cur_pos = (row, col)
@@ -54,13 +90,13 @@ def arrange(exam_room, subjs, offset_start = 0, diagonal = 0, copy = 0): # ExamR
 
                 # Checks if Current / Placing Element repeats on either left or right side
                 col_check = any(
-                    (0 <= (col + offset) < columns) and (exam_room.matrix[row][col + offset] == subjs[i][0])
+                    (0 <= (col + offset) < columns) and (exam_room.matrix[row][col + offset][:-2] == subjs[i][0])
                     for offset in (-2, 2)
                 )
 
                 # Checks if Current / Placing Element repeats on either top or bottom
                 row_check = (not col_check) and any(
-                    (0 <= (row + offset) < room.rows) and (exam_room.matrix[row + offset][col] == subjs[i][0])
+                    (0 <= (row + offset) < room.rows) and (exam_room.matrix[row + offset][col][:-2] == subjs[i][0])
                     for offset in (-1, 1)
                 )
 
@@ -68,7 +104,7 @@ def arrange(exam_room, subjs, offset_start = 0, diagonal = 0, copy = 0): # ExamR
                 diagonal_offsets = [(-1, 1), (-1, -1), (1, 1), (1, -1)] if offset_start else [(-1, 2), (-1, -2), (1, 2), (1, -2)] # Handles Diagonal Offset Change when start of placement is offset
                 diagonal_check = (not row_check) and any(
                     (0 <= (row + row_offset) < room.rows) and (0 <= (col + col_offset) < columns) and
-                    (exam_room.matrix[row + row_offset][col + col_offset] == subjs[i][0])
+                    (exam_room.matrix[row + row_offset][col + col_offset][:-2] == subjs[i][0])
                     for row_offset, col_offset in diagonal_offsets
                 )
 
@@ -81,11 +117,14 @@ def arrange(exam_room, subjs, offset_start = 0, diagonal = 0, copy = 0): # ExamR
                     if((row,col) == cur_pos):
                         next_called += 1
                 else:
-                    exam_room.matrix[row][col] = subjs[i][0] # Places Element
-                    counts[subjs[i][0]] += 1 # Increments count of placed element
+                    roll = f"{subjs[i][0]}{counts[subjs[i][0]]+1:02}"
+                    exam_room.matrix[row][col] = roll # Places Element
                     subjs[i] = (subjs[i][0], subjs[i][1]-1) # Deducts Amount of Available Element
-                    i = rmv_sub(i, subjs) # Rmv Element if Amount is 0
+                    counts[subjs[i][0]] += 1
+                    i = rmv_sub(i, subjs) # Removes Element if Amount is 0
                     break
 
-
-    print(" ".join(f"{key}:{counts[key] * (2 if copy else 1)}" for key in counts))
+    counts = counts | {"total": sum(counts.values())}
+    # print(" ".join(f"{key}:{counts[key]}" for key in counts))
+    counts = {"matrix":exam_room.matrix} | counts
+    return counts

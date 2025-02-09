@@ -8,7 +8,7 @@ class Room:
         self.columns = columns # int: columns in room
         self.gap = gap # int: specifies where gap is after
         self.type = len(rooms) + 1 # int: assigning a type number
-        self.matrix = [["_"] * gap + [" "] + ["_"] * (columns-gap) for _ in range(rows)] if (gap!=None) else [["_"] * columns for _ in range(rows)] # list[list]: list of lists depicting rows and columns (columns x rows filled with '_')
+        self.matrix = [["______"] * gap + ["    "] + ["______"] * (columns-gap) for _ in range(rows)] if (gap!=None) else [["______"] * columns for _ in range(rows)] # list[list]: list of lists depicting rows and columns (columns x rows filled with '_')
         rooms.append(self)
     
     def __str__(self):
@@ -77,3 +77,6 @@ class ExamRoom():
     
     def __str__(self):
         return "\n".join(" ".join(row) for row in self.matrix)
+    
+    def clear(self):
+        self.matrix = [["______"] * self.room.gap + ["    "] + ["______"] * (self.room.columns-self.room.gap) for _ in range(self.room.rows)] if (self.room.gap!=None) else [["______"] * self.room.columns for _ in range(self.room.rows)]

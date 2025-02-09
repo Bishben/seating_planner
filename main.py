@@ -31,8 +31,8 @@ if(test.run_tests()):
     math2 = models.Exam("GMAT201", "30/12/2003", "09:30", [EE])
     chem2 = models.Exam("CHEM201", "29/12/2003", "09:30", [EE])
 
-    room707 = models.ExamRoom(type1, 707, [("GMAT101", '23CS', 0, 10), ("GMAT101", '24CC', 0, 5), ("CHEM201", '25EE', 30, 40)])
-    ar.arrange(room707, [("A", 14), ("B", 8), ("C", 14), ("D", 6)], 0, 1, 1)
+    room707 = models.ExamRoom(type1, 707, [("GMAT101", '23CS', 0, 10), ("GMAT101", '23CE', 0, 5), ("CHEM201", '25EE', 30, 40)])
+    ar.auto_arrange(room707, [("23CS", 14), ("23CE", 8), ("25EE", 14), ("24ME", 6)])
     print (room707)
 
-    #('24CC', 1, 20), ('25EE', 15, 30)
+    
