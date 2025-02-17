@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      href="bootstrap.min.css"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28
+    29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53
+    54 55 56 57
+    <div
+      class="offcanvas offcanvas-start w-25"
+      tabindex="-1"
+      id="offcanvas"
+      data-bs-keyboard="false"
+      data-bs-backdrop="false"
+    >
+      <div class="offcanvas-header">
+        <h6 class="offcanvas-title d-none d-sm-block" id="offcanvas">Menu</h6>
+        <button
+          type="button"
+          class="btn-close text-reset"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body px-0">
+        <ul
+          class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-start"
+          id="menu"
+        >
+          <li class="nav-item">
+            <a href="#" class="nav-link text-truncate">
+              <i class="fs-5 bi-house"></i
+              ><span class="ms-1 d-none d-sm-inline">Home</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#submenu1"
+              data-bs-toggle="collapse"
+              class="nav-link text-truncate"
+            >
+              <i class="fs-5 bi-speedometer2"></i
+              ><span class="ms-1 d-none d-sm-inline">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-link text-truncate">
+              <i class="fs-5 bi-table"></i
+              ><span class="ms-1 d-none d-sm-inline">Orders</span></a
+            >
+          </li>
+          <li class="dropdown">
+            <a
+              href="#"
+              class="nav-link dropdown-toggle text-truncate"
+              id="dropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="fs-5 bi-bootstrap"></i
+              ><span class="ms-1 d-none d-sm-inline">Bootstrap</span>
+            </a>
+            <ul
+              class="dropdown-menu text-small shadow"
+              aria-labelledby="dropdown"
+            >
+              <li><a class="dropdown-item" href="#">New project...</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li><a class="dropdown-item" href="#">Sign out</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#" class="nav-link text-truncate">
+              <i class="fs-5 bi-grid"></i
+              ><span class="ms-1 d-none d-sm-inline">Products</span></a
+            >
+          </li>
+          <li>
+            <a href="#" class="nav-link text-truncate">
+              <i class="fs-5 bi-people"></i
+              ><span class="ms-1 d-none d-sm-inline">Customers</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col min-vh-100 py-3">
+          <!-- toggler -->
+          <button
+            class="btn float-end"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvas"
+            role="button"
+          >
+            <i
+              class="bi bi-arrow-right-square-fill fs-3"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvas"
+            ></i>
+          </button>
+          Content..
+        </div>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"
+  ></script>
+  <script
+    src="bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+</html>
