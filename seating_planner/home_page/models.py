@@ -141,7 +141,7 @@ class Exam(models.Model):
         code (str): 
             The unique code of the examination (e.g., "GMAT101").
         branches (ManyToMany): 
-            A many-to-many relationship with `Branch` to associate exams with multiple branches.
+            A many-to-many relationship with `Branch` to associate exams with multiple branches (Also Reverse Links).
     """
     code = models.CharField(max_length=7, unique=True)
     branches = models.ManyToManyField(Branch, related_name="exams")
@@ -149,6 +149,89 @@ class Exam(models.Model):
     def __str__(self):
         """
         Returns:
+            str: A string representation of the exam: `code`.
+        """
+        return self.code
+    
+    def display(self):
+        """
+        Returns:
             str: A formatted string displaying the exam details.
         """
         return f"Code: {self.code} | Date: {self.date} | Time: {self.time}"
+    
+class Event(models.Model):
+    """
+    Represents an examination event (e.g., Mid-Terms 2022, Finals 2023).
+
+    Attributes:
+        name (str): 
+            The name of the examination event.
+        start_date (date): 
+            The start date of the examination event.
+        end_date (date): 
+            The end date of the examination event.
+    """
+    name = models.CharField(max_length=100, unique=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    class Meta:
+        verbose_name = "Event"
+        verbose_name_plural = "Events"
+
+    def __str__(self):
+        return self.name
+
+class ExamRoom(models.Model):
+    """
+    Represents a room assigned for an exam.
+
+    Warning:
+        - Room Number has a maximum cap at 999
+
+    Attributes:
+        room (Room): 
+            The associated Room instance.
+        number (int): 
+            The exam room number.
+        matrix (JSONField): 
+            The seating matrix copied from the associated room.
+        branches (ManyToManyField): 
+            A one-way many-to-many relationship storing multiple Branch instances, 
+            but without linking back to ExamRoom.
+    """
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='exam_rooms')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='+')
+    number = models.IntegerField(MaxValueValidator(999))
+    matrix = models.JSONField()
+    branches = models.ManyToManyField(Branch, related_name="+")
+
+    class Meta:
+        verbose_name = "Exam Room"
+        verbose_name_plural = "Exam Rooms"
+
+    def __str__(self):
+        """
+        Returns:
+            str: A string representation of the exam: (Exam Room + `number`).
+        """
+        return f"Room {self.number}"
+
+    def display_info(self):
+        """
+        Returns a formatted string containing details about the exam room.
+
+        Returns:
+            str: A string representation of the exam room details.
+        """
+        return f"Type: {self.room.type}\nNumber: {self.number}\nBranches: {self.branches_range}\n"
+
+    def clear(self):
+        """
+        Resets the matrix to the current configuration of the associated room.
+        This ensures that the exam room seating layout, when cleared, mirrors the latest setup
+        of the selected room.
+        """
+        self.matrix = self.room.matrix
+        self.save()
