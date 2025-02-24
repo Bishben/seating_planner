@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import Branch, Subject, Event, Exam, ExamRoom, Room
 from django import forms
+from django.urls import path
+from django.http import JsonResponse
 
 # Register your models here.
 
@@ -40,12 +42,36 @@ class ExamAdmin(admin.ModelAdmin):
     form = ExamAdminForm
 
     class Media:
-        js = ('admin/js/exam_subject_filter.js',)  # Load our custom JavaScript
+        js = ('admin/js/exam_subject_filter.js',)
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        form.base_fields['subject'].queryset = Subject.objects.none()
+
+        # If editing an existing exam, allow the selected subject
+        if obj and obj.branch:
+            form.base_fields['subject'].queryset = obj.branch.subjects.all()
+        else:
+            form.base_fields['subject'].queryset = Subject.objects.none()
+
         return form
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path("get_subjects_by_branch/", self.admin_site.admin_view(self.get_subjects), name="get_subjects_by_branch"),
+        ]
+        return custom_urls + urls  # Add custom URLs before default ones
+
+    def get_subjects(self, request):
+        """ Return subjects related to the selected branch as JSON """
+        branch_id = request.GET.get("branch_id")
+
+        if branch_id:
+            subjects = Subject.objects.filter(branches__id=branch_id).values("id", "code")
+        else:
+            subjects = Subject.objects.none()
+
+        return JsonResponse({"subjects": list(subjects)})
 
 ## Models
 admin.site.register(Branch, BranchAdmin)
