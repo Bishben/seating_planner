@@ -1,8 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 
 # Create your models here.
-class Room:
+class Room(models.Model):
     """
     Represents a classroom with a specified number of rows and columns.
     It includes an optional gap in the seating arrangement and maintains a matrix representation.
@@ -24,9 +25,12 @@ class Room:
     """
     rows = models.IntegerField(validators=[MinValueValidator(1)])
     columns = models.IntegerField(validators=[MinValueValidator(1)])
-    gap = models.IntegerField(validators=[MaxValueValidator(columns)], null=True, default=None)
+    gap = models.IntegerField(validators=[MinValueValidator(1)], null=True, default=None)
     type = models.IntegerField(null=True, blank=True)
     matrix = models.JSONField(null=True, blank=True)
+    
+    def Meta():
+        unique_together = ('rows', 'columns', 'gap') 
 
     def generate_matrix(self):
         """
@@ -43,6 +47,10 @@ class Room:
             ]
         else:
             return [["______"] * self.columns for _ in range(self.rows)]
+        
+    def clean(self):
+        if self.gap > self.columns:
+            raise ValidationError({'gap': 'Gap cannot be greater than the number of columns.'})
     
     def save(self, *args, **kwargs):
         """
@@ -51,6 +59,8 @@ class Room:
         - Auto-increments the `type` field when *new* object is created.
         - Generates and assigns a seating matrix when object is created or edited.
         """
+        self.clean()
+
         if self.type is None:
             last_room = Room.objects.order_by('-type').first()
             self.type = 1 if last_room is None else last_room.type + 1
@@ -102,7 +112,6 @@ class Branch(models.Model):
     name = models.CharField(max_length=2)
     year = models.CharField(max_length=2)
     strength = models.IntegerField()
-    #exams = models.ManyToManyField(Exam, related_name="branches") # !! Create Exam Field? !! 
 
     class Meta:
         unique_together = ('year', 'name') # Enforces Uniqueness
@@ -130,7 +139,7 @@ class Branch(models.Model):
             return self.year == other.year and self.name == other.name
         return False
     
-class Exam(models.Model):
+class Subject(models.Model): # !! RENAMED EXAM -> Subject !!
     """
     Represents an exam with a specific code and associated branches.
 
@@ -141,10 +150,10 @@ class Exam(models.Model):
         code (str): 
             The unique code of the examination (e.g., "GMAT101").
         branches (ManyToMany): 
-            A many-to-many relationship with `Branch` to associate exams with multiple branches (Also Reverse Links).
+            A many-to-many relationship with `Branch` to associate exams with multiple branches (Also Reverse Relation).
     """
     code = models.CharField(max_length=7, unique=True)
-    branches = models.ManyToManyField(Branch, related_name="exams")
+    branches = models.ManyToManyField(Branch, related_name="subjects")
 
     def __str__(self):
         """
@@ -177,11 +186,34 @@ class Event(models.Model):
     end_date = models.DateField()
 
     class Meta:
-        verbose_name = "Event"
-        verbose_name_plural = "Events"
+        verbose_name = "Examination Event"
+        verbose_name_plural = "Examination Events"
 
     def __str__(self):
         return self.name
+    
+class Exam(models.Model): # !! New Exam Implementation !!
+    """
+    Represents an exam within an event, associated with a specific branch and subject.
+
+    Attributes:
+        event (Event):
+            The associated examination event.
+        branch (Branch):
+            The branch participating in the exam.
+        subject (Subject):
+            The specific subject for the exam.
+    """
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='exams')
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='+')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='+')
+    strength = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('event', 'branch', 'subject')
+
+    def __str__(self):
+        return f"{self.event} | {self.branch} - {self.subject}"
 
 class ExamRoom(models.Model):
     """
@@ -202,10 +234,14 @@ class ExamRoom(models.Model):
             but without linking back to ExamRoom.
     """
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='exam_rooms')
-    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='+')
-    number = models.IntegerField(MaxValueValidator(999))
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='+')
+    exams = models.ManyToManyField(Exam, related_name="room")
+    number = models.IntegerField(validators=[MaxValueValidator(999)])
     matrix = models.JSONField()
-    branches = models.ManyToManyField(Branch, related_name="+")
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    
 
     class Meta:
         verbose_name = "Exam Room"
@@ -235,3 +271,18 @@ class ExamRoom(models.Model):
         """
         self.matrix = self.room.matrix
         self.save()
+
+    def clean(self):
+        """
+        Ensures an exam is not assigned to multiple rooms within the same event.
+        """
+        for exam in self.exams.all():
+            if ExamRoom.objects.filter(event=self.event, exams=exam).exclude(id=self.id).exists():
+                raise ValidationError(f"The exam {exam} is already assigned to another room in this event.")
+
+    def save(self, *args, **kwargs):
+        """
+        Calls `clean` before saving to enforce the validation rule.
+        """
+        self.clean()
+        super().save(*args, **kwargs)
