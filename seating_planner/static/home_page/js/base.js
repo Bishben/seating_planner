@@ -20,27 +20,36 @@ document.addEventListener("DOMContentLoaded", function () {
       }
   });
 
+  // DROPDOWN MENU FUNCTIONALITY
   const dropdownMenu = document.getElementById("dropdownMenu");
-    const dropdownItems = document.querySelectorAll(".dropdown-option");
+  const dropdownItems = document.querySelectorAll(".dropdown-option");
 
-    dropdownItems.forEach(item => {
-        item.addEventListener("click", function (event) {
-            event.preventDefault(); // Prevent default navigation
-            
-            let selectedText = this.textContent;
-            let selectedHref = this.getAttribute("href");
+  // Load previously selected item from localStorage
+  let selectedItem = localStorage.getItem("selectedDropdownItem");
+  let selectedHref = localStorage.getItem("selectedDropdownHref");
 
-            // Get the original button text (Exams) and link
-            let originalText = dropdownMenu.textContent.trim();
-            let originalHref = dropdownMenu.getAttribute("href");
+  if (selectedItem && selectedHref) {
+      dropdownMenu.textContent = selectedItem;
+      dropdownMenu.setAttribute("href", selectedHref);
+  }
 
-            // Swap the button text with the selected option's text
-            dropdownMenu.textContent = selectedText;
-            dropdownMenu.setAttribute("href", selectedHref);
+  dropdownItems.forEach(item => {
+      item.addEventListener("click", function (event) {
+          event.preventDefault(); // Prevent default navigation
 
-            // Update the clicked item to the original button text
-            this.textContent = originalText;
-            this.setAttribute("href", originalHref);
-        });
-    });
+          let selectedText = this.textContent;
+          let selectedHref = this.getAttribute("href");
+
+          // Store the selected item in localStorage
+          localStorage.setItem("selectedDropdownItem", selectedText);
+          localStorage.setItem("selectedDropdownHref", selectedHref);
+
+          // Update the dropdown menu text
+          dropdownMenu.textContent = selectedText;
+          dropdownMenu.setAttribute("href", selectedHref);
+
+          // Navigate to the new page
+          window.location.href = selectedHref;
+      });
+  });
 });
