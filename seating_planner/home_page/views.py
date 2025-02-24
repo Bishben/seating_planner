@@ -9,8 +9,8 @@ def home(request):
 def events(request):
     return render(request, "home_page/events.html")
 
-def exams(request):
-    return render(request, "home_page/exams.html")
+def subjects(request):
+    return render(request, "home_page/subjects.html")
 
 def branches(request):
     return render(request, "home_page/branches.html")
