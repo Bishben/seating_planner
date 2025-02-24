@@ -1,12 +1,12 @@
-asgiref @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/asgiref_1729057877436/work
+asgiref
 Django==5.1.6
-mkl-service==2.4.0
-mkl_fft @ file:///C:/Users/dev-admin/mkl/mkl_fft_1730824198951/work
-mkl_random @ file:///C:/Users/dev-admin/mkl/mkl_random_1730824302834/work
+mkl-service==2.4.2
+mkl_fft
+mkl_random 
 python-dotenv==1.0.1
-pytz @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/pytz_1729039375330/work
+pytz
 setuptools==72.1.0
-sqlparse @ file:///C:/Users/dev-admin/perseverance-python-buildout/croot/sqlparse_1729064073909/work
-typing_extensions @ file:///C:/b/abs_0ffjxtihug/croot/typing_extensions_1734714875646/work
+sqlparse
+typing_extensions
 tzdata==2025.1
 wheel==0.44.0
