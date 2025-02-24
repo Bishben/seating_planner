@@ -14,7 +14,7 @@
     <body class="dark-mode">
         <nav class="navbar navbar bg-dark border-bottom border-body navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Seating Planner</a>
+                <a class="navbar-brand">Seating Planner</a>
 
                 <button
                     class="navbar-toggler"
@@ -31,24 +31,26 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Events</a>
+                            <a class="nav-link active" aria-current="page" href="{% url 'home_page:events' %}">Events</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">History</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a
-                            class="nav-link dropdown-toggle"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
+                                id="dropdownMenu"
+                                class="nav-link dropdown-toggle"
+                                href="{% url 'home_page:exams' %}"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
                             >
-                            Exams
+                                Exams
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Branches</a></li>
-                                <li><a class="dropdown-item" href="#">Rooms</a></li>
+                                <li><a class="dropdown-item dropdown-option" href="{% url 'home_page:exams' %}">Exams</a></li>
+                                <li><a class="dropdown-item dropdown-option" href="{% url 'home_page:branches' %}">Branches</a></li>
+                                <li><a class="dropdown-item dropdown-option" href="{% url 'home_page:rooms' %}">Rooms</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -70,7 +72,7 @@
         {% block content %} {% endblock %}
     </body>
 
-    <script src="{% static "/home_page/js/base.js" %}"></script>
+    <script src="{% static '/home_page/js/base.js' %}"></script>
     <script src="{% static "bootstrap.bundle.min.js" %}"></script>
     {% block script %} {% endblock %}
 </html>
