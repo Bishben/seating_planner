@@ -6,11 +6,8 @@ app_name = 'home_page'
 urlpatterns = [
     path('', views.home),
     path('events/', views.events, name='events'),
-<<<<<<< HEAD
     path('events/finals2024/',views.eventsinstance, name='eventsinstance'),
     path('exams/', views.exams, name='exams'),
     path('branches/', views.branches, name='branches'),
     path('rooms/', views.rooms, name='rooms'),
-=======
->>>>>>> 4591dd5f6239f7e95b3f4decfb0add98e3576e27
 ]
