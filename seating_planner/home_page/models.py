@@ -139,7 +139,7 @@ class Branch(models.Model):
             return self.year == other.year and self.name == other.name
         return False
     
-class Subject(models.Model): # !! RENAMED EXAM -> Subject !!
+class Subject(models.Model):
     """
     Represents an exam with a specific code and associated branches.
 
@@ -192,7 +192,7 @@ class Event(models.Model):
     def __str__(self):
         return self.name
     
-class Exam(models.Model): # !! New Exam Implementation !!
+class Exam(models.Model):
     """
     Represents an exam within an event, associated with a specific branch and subject.
 
@@ -210,7 +210,17 @@ class Exam(models.Model): # !! New Exam Implementation !!
     strength = models.IntegerField(default=0)
 
     class Meta:
-        unique_together = ('event', 'branch', 'subject')
+        unique_together = ('event', 'branch', 'subject')\
+        
+    def save(self, *args, **kwargs):
+        """
+        Ensures that `strength` defaults to the `branch.strength` value if left as 0.
+        If the user manually edits `strength`, it keeps the user-defined value.
+        """
+        if self.strength == 0 and self.branch:
+            self.strength = self.branch.strength  # Default to branch's strength
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.event} | {self.branch} - {self.subject}"

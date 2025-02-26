@@ -6,26 +6,46 @@ from django.http import JsonResponse
 
 # Register your models here.
 
-## Branch Modification: Displays Chosen Subjects
+## Branch Modification
 class BranchAdmin(admin.ModelAdmin):
+    """
+    Customizes the Django Admin for the Branch model:
+    - Displays the name, year, strength, and associated subjects in this order.
+    - Subjects are shown in a comma-separated format (read-only field).
+    - Uses prefetch_related for optimized database queries.
+    """
     list_display = ("name", "year", "strength", "display_subjects")  
-    readonly_fields = ("display_subjects",)  # Makes it visible but not editable
+    readonly_fields = ("display_subjects",)
 
     def display_subjects(self, obj):
+        """
+        Returns a comma-separated list of subjects associated with the branch.
+        """
         return ", ".join([sub.code for sub in obj.subjects.all()])
     display_subjects.short_description = "Subjects"
+    
 
     def get_queryset(self, request):
+        """
+        Optimizes query performance by prefetching related subjects.
+        """
         return super().get_queryset(request).prefetch_related("subjects")
 
 ## Subject Modification: Makes Choices Field Horizontal
 class SubjectAdmin(admin.ModelAdmin):
+    """
+    Customizes the Django Admin for the Subject model:
+    - Displays the ManyToMany field (branches) as a horizontal multi-select.
+    """
     filter_horizontal = ("branches",)  # Horizontal selection UI
 
 ## Exam Modification: Adds help_text for strength, 
-
-
 class ExamAdminForm(forms.ModelForm):
+    """
+    Custom form for ExamAdmin to:
+    - Add a help_text for the 'strength' field.
+    - Filter the 'subject' field based on the selected branch.
+    """
     class Meta:
         model = Exam
         fields = '__all__'
@@ -33,47 +53,56 @@ class ExamAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['strength'].help_text = "If left empty, it will default to the total strength of the selected branch."
+        # Adds a help text to the strength field
+        self.fields['strength'].help_text = "Leave empty(0) to default to the actual strength of the selected branch."
 
-        # Initially, disable subject selection
+        # Initially empty queryset for subjects to avoid showing irrelevant choices
         self.fields['subject'].queryset = Subject.objects.none()
 
+         # Filter subjects based on branch only when **editing**
+        if self.instance and self.instance.pk:
+            branch = self.instance.branch
+            if branch:
+                self.fields['subject'].queryset = Subject.objects.filter(branches=branch)
+            else:
+                self.fields['subject'].queryset = Subject.objects.none()  
+
 class ExamAdmin(admin.ModelAdmin):
+    """
+    Customizes the Django Admin for the Exam model:
+    - Uses the custom ExamAdminForm for subject filtering.
+    - Includes an AJAX endpoint to dynamically filter subjects when a branch is selected.
+    - Links a JavaScript file for real-time filtering.
+    """
     form = ExamAdminForm
 
-    class Media:
-        js = ('admin/js/exam_subject_filter.js',)
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-
-        # If editing an existing exam, allow the selected subject
-        if obj and obj.branch:
-            form.base_fields['subject'].queryset = obj.branch.subjects.all()
-        else:
-            form.base_fields['subject'].queryset = Subject.objects.none()
-
-        return form
-
     def get_urls(self):
+        """
+        Extends the default Django Admin URLs with a custom endpoint:
+        - `/admin/app_name/exam/get_subjects/` for AJAX filtering of subjects.
+        """
         urls = super().get_urls()
         custom_urls = [
-            path("get_subjects_by_branch/", self.admin_site.admin_view(self.get_subjects), name="get_subjects_by_branch"),
+            path('get_subjects/', self.admin_site.admin_view(self.get_subjects), name="get_subjects"),
         ]
-        return custom_urls + urls  # Add custom URLs before default ones
+        return custom_urls + urls
 
     def get_subjects(self, request):
-        """ Return subjects related to the selected branch as JSON """
-        branch_id = request.GET.get("branch_id")
+        """
+        Handles AJAX request to fetch subjects based on the selected branch.
+        Returns a JSON response with subject ID and code.
+        """
+        branch_id = request.GET.get('branch_id')
+        subjects = Subject.objects.filter(branches__id=branch_id).values('id', 'code') if branch_id else []
+        return JsonResponse(list(subjects), safe=False)
 
-        if branch_id:
-            subjects = Subject.objects.filter(branches__id=branch_id).values("id", "code")
-        else:
-            subjects = Subject.objects.none()
+    class Media:
+        """
+        Includes JavaScript for dynamic subject filtering based on branch selection.
+        """
+        js = ('admin/js/subject_filter.js',) 
 
-        return JsonResponse({"subjects": list(subjects)})
-
-## Models
+## Model Registrations
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(Subject,SubjectAdmin)
 admin.site.register(Event)

@@ -20,8 +20,3 @@ def rooms(request):
 
 def eventsinstance(request):
     return render(request, "home_page/ExamRoom.html")
-
-def get_subjects_by_branch(request):
-    branch_id = request.GET.get('branch_id')
-    subjects = Subject.objects.filter(branches__id=branch_id).values("id", "code")
-    return JsonResponse({"subjects": list(subjects)})

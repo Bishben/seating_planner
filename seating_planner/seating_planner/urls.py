@@ -23,7 +23,6 @@ from django.conf.urls.static import static
 from home_page import views
 
 urlpatterns = [
-    path("admin/get_subjects_by_branch/", views.get_subjects_by_branch, name="get_subjects_by_branch"),
     path('admin/', admin.site.urls),
     path('', include('home_page.urls')),
 ]
