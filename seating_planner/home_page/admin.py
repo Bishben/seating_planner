@@ -14,7 +14,6 @@ class BranchAdmin(admin.ModelAdmin):
     - Subjects are shown in a comma-separated format (read-only field).
     - Uses prefetch_related for optimized database queries.
     """
-    list_display = ("name", "year", "strength", "display_subjects")  
     readonly_fields = ("display_subjects",)
 
     def display_subjects(self, obj):
