@@ -10,4 +10,5 @@ urlpatterns = [
     path('subjects/', views.subjects, name='subjects'),
     path('branches/', views.branches, name='branches'),
     path('rooms/', views.rooms, name='rooms'),
+    path('history/', views.object_history, name='history')
 ]

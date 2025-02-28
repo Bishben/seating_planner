@@ -1,101 +1,92 @@
 <!DOCTYPE html>
 {% extends "home_page/base.html" %}
 {% load static %}
+
 {% block style %}
     <link rel="stylesheet" href="{% static 'home_page/css/rooms.css' %}"/>
 {% endblock %}
+
 {% block title %}
-    SP | Events
+    SP | Rooms
 {% endblock %}
+
 {% block content %}
-    <div class="container mt-3">
+    <div class="container mt-5">
+        <h2>Rooms</h2>
         <div class="row">
-            <!-- Card 1 -->
-            <div class="col-md-4 mb-3">
-                <div class="card text-bg-dark border-secondary mb-3 h-100 position-relative" style="max-width: 540px">
-                    <div class="card-body">
-                        <h5 class="card-title">Type 1</h5>
-                        <p class="card-text">Details</p>
+            {% for room in rooms %}
+                <!-- Room Card -->
+                <div class="col-md-4 mb-3">
+                    <div class="card text-bg-dark border-secondary mb-3 h-100 position-relative" style="max-width: 540px">
+                        <div class="card-body">
+                            <h5 class="card-title">Type {{ room.type }}</h5>
+                            <p class="card-text">Room Details</p>
 
-                        <!-- Edit Button (Triggers Fullscreen Modal) -->
-                        <button
-                            type="button"
-                            class="btn btn-primary position-absolute top-0 end-0 m-2"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editModal1"
-                        >
-                            View
-                        </button>
-                    </div>
-                    
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item text-bg-dark border-secondary">
-                            Rows: 5
-                        </li>
-                        <li class="list-group-item text-bg-dark border-secondary">
-                            Columns: 3
-                        </li>
-                    </ul>
-
-                    <div class="card-footer text-light border-secondary">
-                        Last edited: 2 days ago
-                    </div>
-                </div>
-            </div>
-
-            <!-- Fullscreen Edit Modal -->
-            <div class="modal fade" id="editModal1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel1" aria-hidden="true">
-                <div class="modal-dialog modal-fullscreen">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="editModalLabel1">Edit GMAT101</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <!-- View Button (Triggers Fullscreen Modal) -->
+                            <button
+                                type="button"
+                                class="btn btn-primary position-absolute top-0 end-0 m-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal{{ room.id }}"
+                            >
+                                View
+                            </button>
                         </div>
-                        <div class="modal-body">
-                            <div class="table-container">
-                                <table id="editableTable">
-                                    <thead>
-                                        <tr id="tableHeader">
-                                            <th>Field</th>
-                                            <th>Value</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td contenteditable="true">Course Name</td>
-                                            <td contenteditable="true">GMAT101</td>
-                                        </tr>
-                                        <tr>
-                                            <td contenteditable="true">Date</td>
-                                            <td contenteditable="true">12/10/2025</td>
-                                        </tr>
-                                        <tr>
-                                            <td contenteditable="true">Time</td>
-                                            <td contenteditable="true">10:30 A.M.</td>
-                                        </tr>
-                                        <tr>
-                                            <td contenteditable="true">Branches</td>
-                                            <td contenteditable="true">CY, CC</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- Controls for Editing -->
-                            <div class="d-flex gap-2 mt-3">
-                                <button id="addRow" class="btn btn-outline-primary flex-grow-1">+ Add Row</button>
-                                <button id="addColumn" class="btn btn-outline-success flex-grow-1">+ Add Column</button>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="saveChanges">Save Changes</button>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-bg-dark border-secondary">
+                                Rows: {{ room.rows }}
+                            </li>
+                            <li class="list-group-item text-bg-dark border-secondary">
+                                Columns: {{ room.columns }}
+                            </li>
+                            {% if room.gap %}
+                            <li class="list-group-item text-bg-dark border-secondary">
+                                Gap After Column: {{ room.gap }}
+                            </li>
+                            {% endif %}
+                        </ul>
+
+                        <div class="card-footer text-light border-secondary">
+                            Last edited: N/A <!-- You can update this dynamically if needed -->
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Fullscreen Edit Modal -->
+                <div class="modal fade" id="editModal{{ room.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel{{ room.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-fullscreen">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="editModalLabel{{ room.id }}">Room Type {{ room.type }}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="table-container">
+                                    <table id="roomMatrixTable{{ room.id }}" class="table table-bordered">
+                                        <tbody>
+                                            {% for row in room.generate_matrix %}
+                                                <tr>
+                                                    {% for cell in row %}
+                                                        <td>{{ cell }}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
+
 {% block script %}
     <script src="{% static '/home_page/js/rooms.js' %}"></script>
 {% endblock %}

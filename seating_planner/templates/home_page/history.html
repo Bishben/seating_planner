@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% extends "home_page/base.html" %}
+{% load static %}
+
+{% block style_block %}
+    <link rel="stylesheet" href="{% static 'home_page/css/events.css' %}" />
+{% endblock %}
+
+{% block title %}
+    SP | History
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Recent Changes</h2>
+    <div class="row">
+        {% for entry in history %}
+        <div class="col-md-4 mb-3">
+            <div class="card text-bg-dark border-secondary">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% if entry.action_flag == 1 %}
+                            <span style="color: green;">&#43;Added</span> <!-- Created -->
+                        {% elif entry.action_flag == 2 %}
+                            <span style="color: orange;">✏️Edited</span> <!-- Updated -->
+                        {% elif entry.action_flag == 3 %}
+                            <span style="color: red;">&#x1F5D1;Removed</span>
+                        {% endif %}
+                        {{ entry.object_repr }}
+                    </h5>
+                    <hr>
+                    <p class="card-text">Model: {{ entry.content_type.model|title }}</p>
+                    <p class="card-text">By {{ entry.user.username }} on {{ entry.action_time }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning text-center">No history available.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
