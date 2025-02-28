@@ -247,7 +247,7 @@ class ExamRoom(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='+')
     exams = models.ManyToManyField(Exam, related_name="room")
     number = models.IntegerField(validators=[MaxValueValidator(999)])
-    matrix = models.JSONField()
+    matrix = models.JSONField(null=True, blank=True)
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
@@ -282,17 +282,17 @@ class ExamRoom(models.Model):
         self.matrix = self.room.matrix
         self.save()
 
-    def clean(self):
-        """
-        Ensures an exam is not assigned to multiple rooms within the same event.
-        """
-        for exam in self.exams.all():
-            if ExamRoom.objects.filter(event=self.event, exams=exam).exclude(id=self.id).exists():
-                raise ValidationError(f"The exam {exam} is already assigned to another room in this event.")
+    # def clean(self):
+    #     """
+    #     Ensures an exam is not assigned to multiple rooms within the same event.
+    #     """
+    #     for exam in self.exams.all():
+    #         if ExamRoom.objects.filter(event=self.event, exams=exam).exclude(id=self.id).exists():
+    #             raise ValidationError(f"The exam {exam} is already assigned to another room in this event.")
 
-    def save(self, *args, **kwargs):
-        """
-        Calls `clean` before saving to enforce the validation rule.
-        """
-        self.clean()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     """
+    #     Calls `clean` before saving to enforce the validation rule.
+    #     """
+    #     self.clean()
+    #     super().save(*args, **kwargs)

@@ -55,16 +55,9 @@ class ExamAdminForm(forms.ModelForm):
         # Adds a help text to the strength field
         self.fields['strength'].help_text = "Leave empty(0) to default to the actual strength of the selected branch."
 
-        # Initially empty queryset for subjects to avoid showing irrelevant choices
-        self.fields['subject'].queryset = Subject.objects.none()
-
-         # Filter subjects based on branch only when **editing**
+        # Filter subjects based on branch after creation (ie When Editing)
         if self.instance and self.instance.pk:
-            branch = self.instance.branch
-            if branch:
-                self.fields['subject'].queryset = Subject.objects.filter(branches=branch)
-            else:
-                self.fields['subject'].queryset = Subject.objects.none()  
+            self.fields['subject'].queryset = Subject.objects.filter(branches=self.instance.branch) 
 
 class ExamAdmin(admin.ModelAdmin):
     """
@@ -101,11 +94,19 @@ class ExamAdmin(admin.ModelAdmin):
         """
         js = ('admin/js/subject_filter.js',) 
 
+## ExamRoom Modification: Makes Choices Field Horizontal
+class ExamRoomAdmin(admin.ModelAdmin):
+    """
+    Customizes the Django Admin for the Subject model:
+    - Displays the ManyToMany field (branches) as a horizontal multi-select.
+    """
+    filter_horizontal = ("exams",)  # Horizontal selection UI
+
 ## Model Registrations
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(Subject,SubjectAdmin)
 admin.site.register(Event)
 admin.site.register(Exam, ExamAdmin)
-admin.site.register(ExamRoom)
+admin.site.register(ExamRoom, ExamRoomAdmin)
 admin.site.register(Room)
 

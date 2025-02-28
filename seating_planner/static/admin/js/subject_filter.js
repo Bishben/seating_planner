@@ -3,12 +3,17 @@
  * Uses AJAX to fetch relevant subjects without refreshing the page.
  *
  * @fileoverview Documentation: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+ *
  */
 document.addEventListener("DOMContentLoaded", function () {
   const branchField = document.querySelector("#id_branch");
   const subjectField = document.querySelector("#id_subject");
 
   if (branchField && subjectField) {
+    if (!branchField.value) {
+      subjectField.innerHTML = "<option value=''>---------</option>";
+    }
+
     branchField.addEventListener("change", function () {
       const branchId = branchField.value;
       subjectField.innerHTML = "<option value=''>---------</option>"; // Reset options
