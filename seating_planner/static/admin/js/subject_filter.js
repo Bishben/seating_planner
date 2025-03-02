@@ -6,6 +6,7 @@
  *
  */
 document.addEventListener("DOMContentLoaded", function () {
+  console.log("filter script loaded");
   const branchField = document.querySelector("#id_branch");
   const subjectField = document.querySelector("#id_subject");
 

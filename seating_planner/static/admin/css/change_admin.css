@@ -1,0 +1,30 @@
+/* Match Django Admin Theme */
+
+#exam-container .exam-entry {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+#exam-container select,
+#exam-container input {
+  flex: 1;
+}
+
+/* Custom Styling for Add Exam Button */
+.add-exam-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px !important;
+  border-radius: 5px;
+  letter-spacing: 1px;
+  border: none;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.add-exam-btn:hover {
+  background-color: #218838;
+}

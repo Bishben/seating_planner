@@ -10,3 +10,4 @@ sqlparse
 typing_extensions
 tzdata==2025.1
 wheel==0.44.0
+django-select2

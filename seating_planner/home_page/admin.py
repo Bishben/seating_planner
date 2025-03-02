@@ -3,6 +3,7 @@ from .models import Branch, Subject, Event, Exam, ExamRoom, Room
 from django import forms
 from django.urls import path
 from django.http import JsonResponse
+from django_select2.forms import Select2Widget
 
 # Register your models here.
 
@@ -95,13 +96,50 @@ class ExamAdmin(admin.ModelAdmin):
         js = ('admin/js/subject_filter.js',) 
 
 ## ExamRoom Modification: Makes Choices Field Horizontal
-class ExamRoomAdmin(admin.ModelAdmin):
-    """
-    Customizes the Django Admin for the Subject model:
-    - Displays the ManyToMany field (branches) as a horizontal multi-select.
-    """
-    filter_horizontal = ("exams",)  # Horizontal selection UI
+class ExamRoomAdminForm(forms.ModelForm):
+    class Meta:
+        model = ExamRoom
+        fields = "__all__"
+        exclude = ['matrix',] 
+    
+    exam_data = forms.CharField(widget=forms.HiddenInput(), required=False)
 
+    class Media:
+        js = ('admin/js/roll_selector.js',)
+
+class ExamRoomAdmin(admin.ModelAdmin):
+    form = ExamRoomAdminForm
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('get_exams/', self.admin_site.admin_view(self.get_exams), name='get_exams'),
+            path('get_exam_room/', self.admin_site.admin_view(self.get_exam_room), name='get_exam_room'),
+        ]
+        return custom_urls + urls
+    
+    def get_exam_room(self, request):
+        """
+        Returns a JSON response containing exams filtered by event.
+        """
+        event_id = request.GET.get("event_id")
+        if event_id:
+            exams = ExamRoom.objects.filter(event_id=event_id).values("id", "exam_data")
+            return JsonResponse(list(exams), safe=False)
+        return JsonResponse([], safe=False)
+
+
+    def get_exams(self, request):
+        """
+        Returns a JSON response containing exams filtered by event.
+        """
+        event_id = request.GET.get("event_id")
+        if event_id:
+            exams = Exam.objects.filter(event_id=event_id).values("id", "branch__name", "branch__year", "subject__code")
+            return JsonResponse(list(exams), safe=False)
+        return JsonResponse([], safe=False)
+
+    
 ## Model Registrations
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(Subject,SubjectAdmin)
