@@ -1,23 +1,45 @@
-document.addEventListener("DOMContentLoaded", function () {
-  // THEME TOGGLE
-  if (localStorage.getItem("theme") === "light") {
+document.addEventListener("DOMContentLoaded", () => {
+    // THEME TOGGLE
+    if (localStorage.getItem("theme") === "light") {
       document.body.classList.remove("dark-mode");
       document.body.classList.add("light-mode");
       document.getElementById("themeToggle").innerText = "☀️";
-  }
-
-  document.getElementById("themeToggle").addEventListener("click", function () {
+      
+      // Apply light theme to all cards
+      const cards = document.querySelectorAll(".card");
+      cards.forEach(card => {
+        card.classList.remove("text-bg-dark");
+        card.classList.add("text-bg-light");
+      });
+    }
+  
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      const cards = document.querySelectorAll(".card");
+  
       if (document.body.classList.contains("dark-mode")) {
-          document.body.classList.remove("dark-mode");
-          document.body.classList.add("light-mode");
-          localStorage.setItem("theme", "light");
-          this.innerText = "☀️";
+        document.body.classList.remove("dark-mode");
+        document.body.classList.add("light-mode");
+        localStorage.setItem("theme", "light");
+        document.getElementById("themeToggle").innerText = "☀️";
+        
+        // Apply light theme to all cards
+        cards.forEach(card => {
+          card.classList.remove("text-bg-dark");
+          card.classList.add("text-bg-light");
+        });
       } else {
-          document.body.classList.remove("light-mode");
-          document.body.classList.add("dark-mode");
-          localStorage.setItem("theme", "dark");
-          this.innerText = "🌙";
+        document.body.classList.remove("light-mode");
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("theme", "dark");
+        document.getElementById("themeToggle").innerText = "🌙";
+        
+        // Apply dark theme to all cards
+        cards.forEach(card => {
+          card.classList.remove("text-bg-light");
+          card.classList.add("text-bg-dark");
+        });
       }
+    });
   });
 
   // DROPDOWN MENU FUNCTIONALITY
@@ -52,4 +74,28 @@ document.addEventListener("DOMContentLoaded", function () {
           window.location.href = selectedHref;
       });
   });
+
+document.addEventListener("DOMContentLoaded", ()=> {
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+
+    // Get current path
+    const currentPath = window.location.pathname;
+
+    if (currentPath.includes("events")) {
+        searchForm.action = "{% url 'home_page:events' %}";
+        searchInput.placeholder = "Search Events...";
+    } else if (currentPath.includes("history")) {
+        searchForm.action = "{% url 'home_page:history' %}";
+        searchInput.placeholder = "Search History...";
+    } else if (currentPath.includes("subjects")) {
+        searchForm.action = "{% url 'home_page:subjects' %}";
+        searchInput.placeholder = "Search Subjects...";
+    } else if (currentPath.includes("branches")) {
+        searchForm.action = "{% url 'home_page:branches' %}";
+        searchInput.placeholder = "Search Branches...";
+    } else if (currentPath.includes("rooms")) {
+        searchForm.action = "{% url 'home_page:rooms' %}";
+        searchInput.placeholder = "Search Rooms...";
+    }
 });

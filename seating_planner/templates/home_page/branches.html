@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block style_block %}
-    <link rel="stylesheet" href="{% static 'home_page/css/events.css' %}" />
+    <link rel="stylesheet" href="{% static 'home_page/css/base.css' %}" />
 {% endblock %}
 
 {% block title %}
@@ -13,6 +13,9 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Branches</h2>
+    {% if query %}
+    <p>Showing results for: <strong>{{ query }}</strong></p>
+    {% endif %}
     <div class="row">
         {% for branch in branches %}
         <div class="col-md-4 mb-3">
