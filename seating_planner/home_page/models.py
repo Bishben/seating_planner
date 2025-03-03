@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+import json
 
 # Create your models here.
 class Room(models.Model):
@@ -245,7 +246,7 @@ class ExamRoom(models.Model):
     """
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='exam_rooms')
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='+')
-    exams = models.ManyToManyField(Exam, related_name="room")
+    exam_data = models.JSONField(default=list)
     number = models.IntegerField(validators=[MaxValueValidator(999)])
     matrix = models.JSONField(null=True, blank=True)
     date = models.DateField()
@@ -282,17 +283,21 @@ class ExamRoom(models.Model):
         self.matrix = self.room.matrix
         self.save()
 
-    # def clean(self):
-    #     """
-    #     Ensures an exam is not assigned to multiple rooms within the same event.
-    #     """
-    #     for exam in self.exams.all():
-    #         if ExamRoom.objects.filter(event=self.event, exams=exam).exclude(id=self.id).exists():
-    #             raise ValidationError(f"The exam {exam} is already assigned to another room in this event.")
+    def save(self, *args, **kwargs):
+        # Fetch related exam entries
+        if not self.pk:
+            super().save(*args, **kwargs)
 
-    # def save(self, *args, **kwargs):
-    #     """
-    #     Calls `clean` before saving to enforce the validation rule.
-    #     """
-    #     self.clean()
-    #     super().save(*args, **kwargs)
+        if isinstance(self.exam_data, str):  # Check if it's a string
+            try:
+                self.exam_data = json.loads(self.exam_data)  # Convert to JSON
+            except json.JSONDecodeError:
+                self.exam_data = []  # Fallback to an empty list if there's an error
+        super().save(*args, **kwargs)
+
+
+class ExamEntry(models.Model):
+    exam_room = models.ForeignKey(ExamRoom, related_name="exam_entries", on_delete=models.CASCADE)
+    exam_id = models.IntegerField()  # Reference to the actual exam
+    roll_start = models.IntegerField()
+    roll_end = models.IntegerField()
