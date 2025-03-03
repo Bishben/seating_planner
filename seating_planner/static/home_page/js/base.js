@@ -83,19 +83,14 @@ document.addEventListener("DOMContentLoaded", ()=> {
     const currentPath = window.location.pathname;
 
     if (currentPath.includes("events")) {
-        searchForm.action = "{% url 'home_page:events' %}";
         searchInput.placeholder = "Search Events...";
     } else if (currentPath.includes("history")) {
-        searchForm.action = "{% url 'home_page:history' %}";
         searchInput.placeholder = "Search History...";
     } else if (currentPath.includes("subjects")) {
-        searchForm.action = "{% url 'home_page:subjects' %}";
         searchInput.placeholder = "Search Subjects...";
     } else if (currentPath.includes("branches")) {
-        searchForm.action = "{% url 'home_page:branches' %}";
         searchInput.placeholder = "Search Branches...";
     } else if (currentPath.includes("rooms")) {
-        searchForm.action = "{% url 'home_page:rooms' %}";
         searchInput.placeholder = "Search Rooms...";
     }
 });
