@@ -13,6 +13,9 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Recent Changes</h2>
+    {% if query %}
+    <p>Showing results for: <strong>{{ query }}</strong></p>
+    {% endif %}
     <div class="row">
         {% for entry in history %}
         <div class="col-md-4 mb-3">

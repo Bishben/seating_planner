@@ -24,3 +24,16 @@ body {
 .navbar-brand{
   cursor: pointer;
 }
+
+/* Light Mode */
+.light-mode .card {
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Dark Mode */
+.dark-mode .card {
+  background-color: #1e1e1e !important;
+  color: white !important;
+  border-color: #333 !important;
+}

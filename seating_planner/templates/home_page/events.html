@@ -13,6 +13,9 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Events</h2>
+    {% if query %}
+    <p>Showing results for: <strong>{{ query }}</strong></p>
+    {% endif %}
     <div class="row justify-content-center"> 
         {% for event in events %}
         <div class="col-md-6 mb-4">
