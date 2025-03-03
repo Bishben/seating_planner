@@ -123,8 +123,9 @@ class ExamRoomAdmin(admin.ModelAdmin):
         Returns a JSON response containing exams filtered by event.
         """
         event_id = request.GET.get("event_id")
+        room_num = request.GET.get("room")
         if event_id:
-            exams = ExamRoom.objects.filter(event_id=event_id).values("id", "exam_data")
+            exams = ExamRoom.objects.filter(event_id=event_id, number=room_num).values("id", "exam_data")
             return JsonResponse(list(exams), safe=False)
         return JsonResponse([], safe=False)
 

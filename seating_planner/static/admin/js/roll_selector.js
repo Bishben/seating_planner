@@ -2,9 +2,37 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("connected");
   const container = document.getElementById("exam-container");
   const eventSelect = document.getElementById("id_event");
+  const room = document.getElementById("id_number");
+  const examDataField = document.getElementById("id_exam_data");
   const form = document.querySelector("form"); // Get the admin form
 
-  if (!container || !eventSelect || !form) return; // Prevent errors
+  if (!container || !eventSelect || !form || !examDataField) return; // Prevent errors
+
+  function fetchExistingExamData() {
+    const eventId = eventSelect.value;
+    const room_num = room.value;
+    console.log(eventId);
+    console.log(room_num);
+    if (!eventId) return;
+
+    fetch(
+      `http://127.0.0.1:8000/admin/home_page/examroom/get_exam_room/?event_id=${eventId}&room=${room_num}`
+    )
+      .then((response) => response.json())
+      .then((examRooms) => {
+        if (examRooms.length > 0) {
+          const existingData = examRooms[0].exam_data; // Parse JSON
+          console.log("Existing Exam Data:", existingData);
+          container.innerHTML = ""; // Clear previous entries
+          fetchExamOptions(eventId, (examOptions) => {
+            existingData.forEach((exam) => addExamField(examOptions, exam));
+          });
+        }
+      })
+      .catch((error) =>
+        console.error("Error fetching existing exam data:", error)
+      );
+  }
 
   function collectExamData() {
     let exams = [];
@@ -20,13 +48,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
     });
+    console.log(exams);
     alert("Exam Data JSON: " + examDataField.value);
     examDataField.value = JSON.stringify(exams); // Set the hidden JSON field
   }
 
-  form.addEventListener("submit", function () {
-    collectExamData(); // Call the function just before form submission
-  });
+  document
+    .querySelectorAll(
+      "[name='_save'], [name='_addanother'], [name='_continue']"
+    )
+    .forEach((button) => {
+      button.addEventListener("click", function () {
+        collectExamData(); // Update JSON before saving
+        alert("Exam Data JSON: " + examDataField.value);
+        console.log("Exam data updated:", examDataField.value); // Debugging
+      });
+    });
 
   function fetchExamOptions(eventId, callback) {
     fetch(
@@ -107,4 +144,6 @@ document.addEventListener("DOMContentLoaded", function () {
       event.target.parentElement.remove();
     }
   });
+
+  fetchExistingExamData();
 });

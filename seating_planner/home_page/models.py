@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+import json
 
 # Create your models here.
 class Room(models.Model):
@@ -286,13 +287,13 @@ class ExamRoom(models.Model):
         # Fetch related exam entries
         if not self.pk:
             super().save(*args, **kwargs)
-            
-        self.exam_data = self.get_exam_entries()
-        super().save(*args, **kwargs)  # Save updated data
 
-    def get_exam_entries(self):
-        # Fetch all related exams and format them as JSON
-        return list(self.exam_entries.values("exam_id", "roll_start", "roll_end"))
+        if isinstance(self.exam_data, str):  # Check if it's a string
+            try:
+                self.exam_data = json.loads(self.exam_data)  # Convert to JSON
+            except json.JSONDecodeError:
+                self.exam_data = []  # Fallback to an empty list if there's an error
+        super().save(*args, **kwargs)
 
 
 class ExamEntry(models.Model):
