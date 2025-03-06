@@ -82,11 +82,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  function addExamField(examOptions) {
+  function addExamField(examOptions, existingExam = null) {
     const div = document.createElement("div");
     div.classList.add("exam-entry");
 
-    let selectHTML = `<select name="exam_choice" class="exam-select"><option value="">Select Exam</option>`;
+    let selectHTML = existingExam
+      ? `<select name="exam_choice" class="exam-select"><option value="${existingExam.id}">Select Exam</option>`
+      : `<select name="exam_choice" class="exam-select"><option value="">Select Exam</option>`;
     examOptions.forEach((exam) => {
       selectHTML += `<option value="${exam.id}">${exam.branch__year}${exam.branch__name} - ${exam.subject__code}</option>`;
     });

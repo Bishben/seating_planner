@@ -246,7 +246,7 @@ class ExamRoom(models.Model):
     """
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='exam_rooms')
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='+')
-    exam_data = models.JSONField(default=list)
+    exam_data = models.JSONField(null=True, blank=True)
     number = models.IntegerField(validators=[MaxValueValidator(999)])
     matrix = models.JSONField(null=True, blank=True)
     date = models.DateField()

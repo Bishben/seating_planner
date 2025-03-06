@@ -120,7 +120,7 @@ class ExamRoomAdmin(admin.ModelAdmin):
     
     def get_exam_room(self, request):
         """
-        Returns a JSON response containing exams filtered by event.
+        Returns a JSON response containing exam rooms filtered by event.
         """
         event_id = request.GET.get("event_id")
         room_num = request.GET.get("room")
