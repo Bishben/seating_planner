@@ -27,7 +27,12 @@
                     <p class="card-text">
                         The {{ event.name }} is scheduled from {{ event.start_date }} to {{ event.end_date }}.
                     </p>
-                    <a href="{% url 'home_page:eventsinstance' %}" class="btn btn-primary">To the exam portal!</a>
+                    
+                    <!-- View Event Details -->
+                    <a href="{% url 'home_page:examroom' event.id %}" class="btn btn-primary">Exam Rooms</a>
+                    <a href="{% url 'home_page:exams' event.id %}" class="btn btn-primary">Exams</a>
+                    
+
                 </div>
             </div>
         </div>

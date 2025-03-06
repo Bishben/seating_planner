@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.admin.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from .models import Subject, Branch, Event, Room
+from .models import Subject, Branch, Event, Room, ExamRoom, Exam
 
 # Create your views here.
 def home(request):
@@ -41,8 +41,15 @@ def rooms(request):
         rooms = rooms.filter(type__icontains=query)
     return render(request, "home_page/rooms.html", {"rooms": rooms,'query':query})
 
-def eventsinstance(request):
-    return render(request, "home_page/ExamRoom.html")
+def examroom(request, event_id):
+    examrooms = ExamRoom.objects.filter(event=event_id) 
+    context={'examrooms': examrooms}
+    return render(request, 'home_page/ExamRoom.html', context)
+
+def exams(request, event_id):
+    exams = Exam.objects.filter(event=event_id) 
+    context={'exams': exams}
+    return render(request, 'home_page/Exams.html', context)
 
 def object_history(request, app_label=None, model_name=None, object_id=None):
     query = request.GET.get('q', '')
