@@ -124,20 +124,23 @@ class ExamRoomAdmin(admin.ModelAdmin):
         """
         event_id = request.GET.get("event_id")
         room_num = request.GET.get("room")
-        if event_id:
+        if event_id and room_num:
             exams = ExamRoom.objects.filter(event_id=event_id, number=room_num).values("id", "exam_data")
             return JsonResponse(list(exams), safe=False)
         return JsonResponse([], safe=False)
-
 
     def get_exams(self, request):
         """
         Returns a JSON response containing exams filtered by event.
         """
         event_id = request.GET.get("event_id")
+        exam_id = request.GET.get("exam_id")
         if event_id:
             exams = Exam.objects.filter(event_id=event_id).values("id", "branch__name", "branch__year", "subject__code")
             return JsonResponse(list(exams), safe=False)
+        elif exam_id:
+            exam = Exam.objects.filter(id=exam_id).values("branch__name", "branch__year", "subject__code")
+            return JsonResponse(list(exam), safe=False)
         return JsonResponse([], safe=False)
 
     

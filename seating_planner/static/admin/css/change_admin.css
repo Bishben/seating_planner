@@ -28,3 +28,35 @@
 .add-exam-btn:hover {
   background-color: #218838;
 }
+
+.select2-confirmation {
+  background: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 10px;
+  text-align: center;
+  position: absolute;
+  width: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+
+.select2-confirmation .confirm-btn,
+.select2-confirmation .cancel-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin: 0 5px;
+  border-radius: 3px;
+}
+
+.select2-confirmation .cancel-btn {
+  background: #dc3545;
+}
+
+.disabled-field {
+  background-color: #e0e0e0 !important;
+  pointer-events: none !important;
+}
