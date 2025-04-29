@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+        "name": "Run Django",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/seating_planner/manage.py",
+        "args": ["runserver"],
+        "django": true,
+        "env": {
+            "PYTHONPATH": "${workspaceFolder}/seating_planner"
+        }
+        }
+    ]
+}
+  

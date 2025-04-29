@@ -1,12 +1,16 @@
-/* Default to dark mode */
-body {
-  background-color: #121212;
-  color: white;
+.light-mode {
+  background-color: #f2f0f5 !important;
+  color: black !important;
 }
 
-.light-mode {
-  background-color: white !important;
-  color: black !important;
+.dark-mode {
+  background-color: #1d2025 !important;
+  color: white !important;
+}
+
+/* for visibility */
+.dark-border {
+  border: 1px solid #2f405c !important;
 }
 
 .toggle-btn {
@@ -24,3 +28,4 @@ body {
 .navbar-brand{
   cursor: pointer;
 }
+

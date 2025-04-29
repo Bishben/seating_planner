@@ -22,9 +22,11 @@
             <div class="card text-bg-dark border-secondary">
                 <div class="card-body">
                     <h5 class="card-title">{{ branch.year }}{{ branch.name }}</h5>
+                </div>
+                <div class="card-body border-top border-secondary">
+                    <p class="card-text"><strong>Strength:</strong> {{ branch.strength }}</p>
                     <hr>
-                    <p class="card-text">Strength: {{ branch.strength }}</p>
-                    <h6>Subjects:</h6>
+                    <h6><strong>Subjects:</strong></h6>
                         {% for subject in branch.subjects.all %}
                         {{ subject.code }}{% if not forloop.last %} | {% endif %}
                         {% endfor %}

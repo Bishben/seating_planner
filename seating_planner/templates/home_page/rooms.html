@@ -37,26 +37,26 @@
                         </div>
 
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item text-bg-dark border-secondary">
+                            <li class="list-group-item border-secondary">
                                 Rows: {{ room.rows }}
                             </li>
-                            <li class="list-group-item text-bg-dark border-secondary">
+                            <li class="list-group-item border-secondary">
                                 Columns: {{ room.columns }}
                             </li>
                             {% if room.gap %}
-                            <li class="list-group-item text-bg-dark border-secondary">
+                            <li class="list-group-item border-secondary">
                                 Gap After Column: {{ room.gap }}
                             </li>
                             {% endif %}
                         </ul>
 
-                        <div class="card-footer text-light border-secondary">
+                        <div class="card-footer border-secondary">
                             Last edited: N/A <!-- You can update this dynamically if needed -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Fullscreen Edit Modal -->
+                <!-- Fullscreen Room Layout View -->
                 <div class="modal fade" id="editModal{{ room.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel{{ room.id }}" aria-hidden="true">
                     <div class="modal-dialog modal-fullscreen">
                         <div class="modal-content">
@@ -91,5 +91,5 @@
 {% endblock %}
 
 {% block script %}
-    <script src="{% static '/home_page/js/rooms.js' %}"></script>
+    <script src="{% static '/home_page/js/view_rooms.js' %}"></script>
 {% endblock %}
