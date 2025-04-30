@@ -71,63 +71,35 @@ document.addEventListener("DOMContentLoaded", () => {
       setDarkMode();
     }
   });
-});
 
-// DROPDOWN MENU FUNCTIONALITY
-const dropdownMenu = document.getElementById("dropdownMenu");
-const dropdownItems = document.querySelectorAll(".dropdown-option");
+  // 2. SEARCH FUNCTIONALITY
 
-// Load previously selected item from localStorage
-let selectedItem = localStorage.getItem("selectedDropdownItem");
-let selectedHref = localStorage.getItem("selectedDropdownHref");
-
-if (selectedItem && selectedHref) {
-  dropdownMenu.textContent = selectedItem;
-  dropdownMenu.setAttribute("href", selectedHref);
-}
-
-dropdownItems.forEach((item) => {
-  item.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent default navigation
-
-    let selectedText = this.textContent;
-    let selectedHref = this.getAttribute("href");
-
-    // Store the selected item in localStorage
-    localStorage.setItem("selectedDropdownItem", selectedText);
-    localStorage.setItem("selectedDropdownHref", selectedHref);
-
-    // Update the dropdown menu text
-    dropdownMenu.textContent = selectedText;
-    dropdownMenu.setAttribute("href", selectedHref);
-
-    // Navigate to the new page
-    window.location.href = selectedHref;
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
+  // Get the search form and input field
   const searchForm = document.getElementById("searchForm");
   const searchInput = document.getElementById("searchInput");
 
+  // Check if the search form and input field exist
   if (!searchForm || !searchInput) {
     console.error("Unable To Find SEARCH FORM");
     return;
   }
 
-  // Get current path
+  // Get the current URL path
   const currentPath = window.location.pathname;
-  console.log(currentPath);
 
-  if (currentPath.includes("events")) {
-    searchInput.placeholder = "Search Events...";
-  } else if (currentPath.includes("history")) {
-    searchInput.placeholder = "Search History...";
-  } else if (currentPath.includes("subjects")) {
-    searchInput.placeholder = "Search Subjects...";
-  } else if (currentPath.includes("branches")) {
-    searchInput.placeholder = "Search Branches...";
-  } else if (currentPath.includes("rooms")) {
-    searchInput.placeholder = "Search Rooms...";
+  // Set the action attribute of the search form based on the current path
+  const placeholderMap = {
+    events: "Search Events...",
+    history: "Search History...",
+    subjects: "Search Subjects...",
+    branches: "Search Branches...",
+    rooms: "Search Rooms..."
+  };
+
+  for (const key in placeholderMap) {
+    if (currentPath.includes(key)) {
+      searchInput.placeholder = placeholderMap[key];
+      break;
+    }
   }
 });
