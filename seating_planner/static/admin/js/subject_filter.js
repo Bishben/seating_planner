@@ -2,7 +2,7 @@
  * Dynamically updates the subject dropdown based on the selected branch in Django Admin.
  * Uses AJAX to fetch relevant subjects without refreshing the page.
  *
- * @fileoverview Documentation: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+ * @fileoverview Documentation: 
  *
  */
 document.addEventListener("DOMContentLoaded", function () {
