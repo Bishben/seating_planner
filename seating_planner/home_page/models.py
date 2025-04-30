@@ -103,8 +103,8 @@ class Branch(models.Model):
             The name of the branch (e.g., "CS", "CC", "EE").
         year (str): 
             The academic year (e.g., "24", "23", "25", "YY").
-        strength (int): 
-            The total number of students in the branch.
+        roll_ranges (list of [start, end] pairs):
+            A list of lists representing the roll number ranges for the branch. 
 
     Notes:
         - The combination of `year` and `name` must be unique.
@@ -112,7 +112,7 @@ class Branch(models.Model):
     """
     name = models.CharField(max_length=2)
     year = models.CharField(max_length=2)
-    strength = models.IntegerField()
+    roll_ranges = models.JSONField(default = list, help_text = "List of [start, end] pairs: [[1, 10], [12, 58]]")
 
     class Meta:
         unique_together = ('year', 'name') # Enforces Uniqueness
@@ -139,6 +139,15 @@ class Branch(models.Model):
         if isinstance(other, Room):
             return self.year == other.year and self.name == other.name
         return False
+    
+    def get_strength(self):
+        """
+        Returns the strength of the branch.
+
+        Returns:
+            int: The number of students in the branch.
+        """
+        return sum(end - start + 1 for start, end in self.roll_ranges)
     
 class Subject(models.Model):
     """
@@ -202,16 +211,16 @@ class Exam(models.Model):
             The associated examination event.
         branch (Branch):
             The branch participating in the exam.
-        subject (Subject):
-            The specific subject for the exam.
+        roll_ranges (list of [start, end] pairs):
+            A list of lists representing the roll number ranges for the branch. 
     """
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='exams')
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='+')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='+')
-    strength = models.IntegerField(default=0)
+    roll_ranges = models.JSONField(default = list, help_text = "List of [start, end] pairs: [[1, 10], [12, 58]]")
 
     class Meta:
-        unique_together = ('event', 'branch', 'subject')\
+        unique_together = ('event', 'branch', 'subject')
         
     def save(self, *args, **kwargs):
         """
