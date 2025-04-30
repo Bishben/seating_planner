@@ -39,6 +39,5 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             data.push(rowData);
         }
-        console.log("Saved Data:", data); // Can be sent to backend via AJAX
     });
 });
