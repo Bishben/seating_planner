@@ -24,7 +24,7 @@
                     <h5 class="card-title">{{ branch.year }}{{ branch.name }}</h5>
                 </div>
                 <div class="card-body border-top border-secondary">
-                    <p class="card-text"><strong>Strength:</strong> {{ branch.strength }}</p>
+                    <p class="card-text"><strong>Strength:</strong> {{ branch.get_strength }}</p>
                     <hr>
                     <h6><strong>Subjects:</strong></h6>
                         {% for subject in branch.subjects.all %}
