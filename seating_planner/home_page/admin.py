@@ -53,9 +53,6 @@ class ExamAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Adds a help text to the strength field
-        self.fields['strength'].help_text = "Leave empty(0) to default to the actual strength of the selected branch."
-
         # Filter subjects based on branch after creation (ie When Editing)
         if self.instance and self.instance.pk:
             self.fields['subject'].queryset = Subject.objects.filter(branches=self.instance.branch) 
