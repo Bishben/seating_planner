@@ -217,23 +217,71 @@ class Exam(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='exams')
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='+')
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='+')
-    roll_ranges = models.JSONField(default = list, help_text = "List of [start, end] pairs: [[1, 10], [12, 58]]")
+    roll_ranges = models.JSONField(default = list, help_text = "List of [start, end] pairs: [[1, 10], [12, 58]] \n Note: Leave Empty to use the default roll range of the branch",blank=True)
+    unassigned_rolls = models.JSONField(default=list, help_text= "List of unassigned rolls: [1, 5, 7] \n Note: Leave Empty During Creation", blank=True)
 
     class Meta:
         unique_together = ('event', 'branch', 'subject')
+
+    def expand_roll_ranges(self, ranges):
+        result = []
+        for start, end in ranges:
+            result.extend(range(start, end + 1))
+        return result
         
+    def assign_roll_range(self, start, end):
+        """
+        Assigns a roll number range to the exam and updates the unassigned rolls.
+
+        Args:
+            start (int): The starting roll number.
+            end (int): The ending roll number.
+        """
+        self.unassigned_rolls = [roll for roll in self.unassigned_rolls if not (start <= roll <= end)]
+        self.save()
+
     def save(self, *args, **kwargs):
         """
         Ensures that `strength` defaults to the `branch.strength` value if left as 0.
         If the user manually edits `strength`, it keeps the user-defined value.
         """
-        if self.strength == 0 and self.branch:
-            self.strength = self.branch.strength  # Default to branch's strength
-        super().save(*args, **kwargs)
-
+        if self.roll_ranges == [] and self.branch:
+            self.roll_ranges = self.branch.roll_ranges  # Default to branch's roll_range
+        
+        if self._state.adding: 
+            self.unassigned_rolls = self.expand_roll_ranges(self.roll_ranges)  # Copy the roll ranges to unassigned rolls on creation
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.event} | {self.branch} - {self.subject}"
+    
+class ExamBranchRollRange(models.Model):
+    """
+    Represents a roll number range for a specific branch and exam within an event.
+
+    Attributes:
+        exam (Exam): 
+            The associated exam instance.
+        roll_start (int): 
+            The starting roll number in the range.
+        roll_end (int): 
+            The ending roll number in the range.
+    """
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='exam_branch_roll_ranges')
+    roll_start = models.IntegerField()
+    roll_end = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        roll_range = list(range(self.roll_start, self.roll_end + 1))
+
+        # Update exam's unassigned_rolls
+        if self.exam.unassigned_rolls:
+            self.exam.unassigned_rolls = [
+                roll for roll in self.exam.unassigned_rolls if roll not in roll_range
+            ]
+            self.exam.save(update_fields=['unassigned_rolls'])
+
+        super().save(*args, **kwargs)
 
 class ExamRoom(models.Model):
     """
@@ -303,10 +351,3 @@ class ExamRoom(models.Model):
             except json.JSONDecodeError:
                 self.exam_data = []  # Fallback to an empty list if there's an error
         super().save(*args, **kwargs)
-
-
-class ExamEntry(models.Model):
-    exam_room = models.ForeignKey(ExamRoom, related_name="exam_entries", on_delete=models.CASCADE)
-    exam_id = models.IntegerField()  # Reference to the actual exam
-    roll_start = models.IntegerField()
-    roll_end = models.IntegerField()
